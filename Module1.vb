@@ -7,6 +7,7 @@ Module Module1
         INTERNALDIALOGTEXT
         PARTTEXTLANG
         PARTTEXT
+        CUSTOMERSTEXT
         Other
 
     End Enum
@@ -69,7 +70,12 @@ Module Module1
                             While Not sr.EndOfStream
                                 Dim col() As String = Split(sr.ReadLine, del)
                                 Dim sp As Dictionary(Of Integer, String) = Parse(col(1))
-                                sw.WriteLine("select @PART = PART from PART where PARTNAME = '{0}'", col(0))
+                                ' sw.WriteLine("select @PART = PART from PART where PARTNAME = '{0}'", col(0))
+                                If selForm = eformType.CUSTOMERSTEXT Then
+                                    sw.WriteLine("select @PART = CUST from CUSTOMERS where CUSTNAME = '{0}'", col(0))
+                                Else
+                                    sw.WriteLine("select @PART = PART from PART where PARTNAME = '{0}'", col(0))
+                                End If
                                 Select Case selForm
                                     Case eformType.INTERNALDIALOGTEXT
                                         sw.WriteLine(
@@ -82,6 +88,10 @@ Module Module1
                                     Case eformType.PARTTEXTLANG
                                         sw.WriteLine(
                                                 "delete from PARTTEXTLANG where PART = @PART"
+                                            )
+                                    Case eformType.CUSTOMERSTEXT
+                                        sw.WriteLine(
+                                                "delete from CUSTOMERSTEXT where CUST = @PART"
                                             )
                                     Case eformType.Other
                                         sw.WriteLine(
@@ -111,7 +121,13 @@ Module Module1
                                                 s,
                                                 Replace(sp(s), "'", "' + char(39) + '")
                                             )
-
+                                        Case eformType.CUSTOMERSTEXT
+                                            sw.WriteLine(
+                                                "insert into CUSTOMERSTEXT (CUST , TEXT , TEXTLINE, TEXTORD) values ( @PART , '{1}' , {0} , {0} )",
+                                                s,
+                                                Replace(sp(s), "'", "' + char(39) + '"),
+                                                fname
+                                            )
                                         Case eformType.Other
                                             sw.WriteLine(
                                                 "insert into {2} (PART , TEXT , TEXTLINE, TEXTORD) values ( @PART , '{1}' , {0} , {0} )",
