@@ -1,4 +1,5 @@
 from enum import Enum
+import sys
 from os.path import exists
 from MedatechUK.cl import clArg
 
@@ -28,6 +29,34 @@ def parse(str):
         ret.append(l)
 
     return ret
+
+def getChar():
+    # figure out which function to use once, and store it in _func
+    if "_func" not in getChar.__dict__:
+        try:
+            # for Windows-based systems
+            import msvcrt # If successful, we are on Windows
+            getChar._func=msvcrt.getch
+
+        except ImportError:
+            # for POSIX-based systems (with termios & tty support)
+            import tty, sys, termios # raises ImportError if unsupported
+
+            def _ttyRead():
+                fd = sys.stdin.fileno()
+                oldSettings = termios.tcgetattr(fd)
+
+                try:
+                    tty.setcbreak(fd)
+                    answer = sys.stdin.read(1)
+                finally:
+                    termios.tcsetattr(fd, termios.TCSADRAIN, oldSettings)
+
+                return answer
+
+            getChar._func=_ttyRead
+
+    return getChar._func()
 
 #region SQL Statements
 
@@ -82,16 +111,20 @@ if __name__ == '__main__':
         if not exists(arg.args()[0]):
             raise NameError("File [{}] does not exist.".format(arg.args()[0]))
 
-        if exists(arg.args()[1]):            
-            r = input("File [{}] already exists. Overwrite? [y/n] ".format(arg.args()[1]))
-            if r.upper() != "Y" :
+        if exists(arg.args()[1]):
+            print("File [{}] already exists. Overwrite? [y/n] ".format(arg.args()[1]))            
+            r = getChar()
+            if str(r.upper()).find("Y") == -1:
+                print("Cancelling.")        
                 exit()
 
         #endregion
             
         for a in list(Mode):
             print("{}: {}".format(a.value, a.name))
-        sel = int(input("Select output format> "))
+        
+        print("Select output format> ")
+        sel = int(getChar())        
 
         for a in list(Mode):
             if a.value==sel:
@@ -104,6 +137,7 @@ if __name__ == '__main__':
 
         if mode == Mode.Other :
             form = input("Please enter the name of the form> ")
+            form = form.upper()
 
         else:
             print("Using format {}".format(mode.name))
