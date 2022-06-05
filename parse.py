@@ -76,11 +76,17 @@ if __name__ == '__main__':
         #region Check Arguments   
         arg = clArg()
 
-        if len(arg.args()) == 0 :
-            raise NameError("No file specified.")
+        if len(arg.args()) != 2 :
+            raise NameError("No files specified.")
 
         if not exists(arg.args()[0]):
             raise NameError("File [{}] does not exist.".format(arg.args()[0]))
+
+        if exists(arg.args()[1]):
+            msg = "File [{}] already exists. Overwrite? [y/n] ".format(arg.args()[1])
+            r = input(msg)
+            if r.upper() != "Y" :
+                exit()
 
         #endregion
             
