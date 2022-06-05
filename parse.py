@@ -82,9 +82,8 @@ if __name__ == '__main__':
         if not exists(arg.args()[0]):
             raise NameError("File [{}] does not exist.".format(arg.args()[0]))
 
-        if exists(arg.args()[1]):
-            msg = "File [{}] already exists. Overwrite? [y/n] ".format(arg.args()[1])
-            r = input(msg)
+        if exists(arg.args()[1]):            
+            r = input("File [{}] already exists. Overwrite? [y/n] ".format(arg.args()[1]))
             if r.upper() != "Y" :
                 exit()
 
