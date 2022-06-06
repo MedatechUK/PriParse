@@ -144,13 +144,17 @@ if __name__ == '__main__':
 
         print("Reading from file [{}].".format(arg.args()[0]))
         with open(arg.args()[0], 'r') as the_file: 
+
             print("Writing to file [{}].".format(arg.args()[1]))
             with open(arg.args()[1], 'w') as out_file:
+
                 out_file.write("{}\n".format(declareRows(mode)))
                 Lines = the_file.readlines()
+
                 for l in Lines:
                     out_file.write("{}\n".format(selectRows(mode, l[:l.find(",")])))
                     out_file.write("{}\n".format(deleteRows(mode)))
+                    
                     for c , p in enumerate(parse(l[l.find(",")+1:].rstrip("\n")),1):
                         out_file.write("{}\n".format(insertRows(mode , c , p )))
     
