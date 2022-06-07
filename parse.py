@@ -10,7 +10,7 @@ def parse(str):
 
     ret = []
     ret.append("<style> p,div,li ")
-    ret.append("{margin:0cm;font-size:10.0pt;font-family:'Verdana';}li > font > p")
+    ret.append("{margin:0cm;font-size:10.0pt;font-family:"+chr(39)+"+char(39)+"+chr(39)+"Verdana"+chr(39)+"+char(39)+"+chr(39)+";}li > font > p")
     ret.append("{display: inline-block;}</style><p >")    
 
     l = ""
@@ -18,9 +18,9 @@ def parse(str):
     for w in word:
         if not len("{} {}".format(l,w)) > 68:
             if len(l) > 0:
-                l += " {}".format(w)
+                l += " {}".format(w.replace( "'", "+CHAR(39)+"))
             else:
-                l += "{}".format(w)
+                l += "{}".format(w.replace( "'", "+CHAR(39)+"))
         else:
             ret.append(l)
             l = ""
@@ -92,7 +92,7 @@ def insertRows(a , c , p):
         'INTERNALDIALOGTEXT': "insert into INTERNALDIALOGTEXT (IV , TEXT , TEXTLINE, TEXTORD, TYPE) values ( @PART , '{}' , {} , {} , 'p')".format(p, c, c) ,
         'PARTTEXT': "insert into PARTTEXT (PART , TEXT , TEXTLINE, TEXTORD) valu5es ( @PART , '{}' , {} , {} )".format(p, c, c) ,
         'PARTTEXTLANG': "insert into PARTTEXTLANG (PART , TEXT , TEXTLINE, TEXTORD) values ( @PART , '{}' , {} , {} )".format(p, c, c) ,
-        'CUSTOMERSTEXT':  "insert into CUSTOMERSTEXT (CUST , TEXT , TEXTLINE, TEXTORD) values ( @CUST , '{1}' , {0} , {0} )".format(p, c, c) ,
+        'CUSTOMERSTEXT':  "insert into CUSTOMERSTEXT (CUST , TEXT , TEXTLINE, TEXTORD) values ( @CUST , '{}' , {} , {} )".format(p, c, c) ,
         'Other': "insert into {} (PART , TEXT , TEXTLINE, TEXTORD) values ( @PART , '{}' , {} , {} )".format(form, p, c, c) ,
     }.get(a.name) 
 
@@ -154,7 +154,7 @@ if __name__ == '__main__':
                 for l in Lines:
                     out_file.write("{}\n".format(selectRows(mode, l[:l.find(",")])))
                     out_file.write("{}\n".format(deleteRows(mode)))
-                    
+
                     for c , p in enumerate(parse(l[l.find(",")+1:].rstrip("\n")),1):
                         out_file.write("{}\n".format(insertRows(mode , c , p )))
     
