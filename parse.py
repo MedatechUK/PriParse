@@ -4,7 +4,7 @@ from os.path import exists
 from MedatechUK.cl import clArg
 
 form = ""
-Mode = Enum('Mode', ['INTERNALDIALOGTEXT', 'PARTTEXT', 'PARTTEXTLANG' , 'CUSTOMERSTEXT', 'ZSRV_CUSTOMERSTEXT' , 'Other' , 'Cancel'])
+Mode = Enum('Mode', ['INTERNALDIALOGTEXT', 'PARTTEXT', 'PARTTEXTLANG' , 'CUSTOMERSTEXT' , 'WORKCTEXT ', 'Other' , 'Cancel'])
 
 def parse(str):   
 
@@ -66,7 +66,7 @@ def declareRows(a):
         'PARTTEXT': "declare @PART bigint" ,
         'PARTTEXTLANG': "declare @PART bigint" ,
         'CUSTOMERSTEXT':  "declare @CUST bigint",
-        'ZSRV_CUSTOMERSTEXT':  "declare @CUST bigint",
+        'WORKCTEXT' : "declare @WORKC bigint",
         'Other': "declare @PART bigint" ,
     }.get(a.name) 
 
@@ -76,7 +76,7 @@ def deleteRows(a):
         'PARTTEXT': "delete from PARTTEXT where PART = @PART" ,
         'PARTTEXTLANG': "delete from PARTTEXTLANG where PART = @PART" ,
         'CUSTOMERSTEXT':  "delete from CUSTOMERSTEXT where CUST = @CUST",
-        'ZSRV_CUSTOMERSTEXT':  "delete from CUSTOMERSTEXT where CUST = @CUST",
+        'WORKCTEXT' : "delete from WORKCTEXT where WORKC = @WORKC",
         'Other': "delete from {} where PART = @PART".format(form)
     }.get(a.name)    
 
@@ -86,8 +86,8 @@ def selectRows(a, name):
         'PARTTEXT': "select @PART = PART from PART where PARTNAME = '{}'".format(name) ,
         'PARTTEXTLANG': "select @PART = PART from PART where PARTNAME = '{}'".format(name) ,
         'CUSTOMERSTEXT': "select @CUST = CUST from CUSTOMERS where CUSTNAME = '{}'".format(name) ,
-        'ZSRV_CUSTOMERSTEXT': "select @CUST = CUST from CUSTOMERS where CUSTNAME = '{}'".format(name) ,
-        'Other': "select @PART = PART from PART where PARTNAME = '{}'".format(name) ,
+        'WORKCTEXT' : "select  @WORKC = WORKC from WORKC",
+        'Other': "select @PART = PART from PART where WORKCNAME = '{}'".format(name) ,
     }.get(a.name) 
 
 def insertRows(a , c , p):
@@ -96,7 +96,7 @@ def insertRows(a , c , p):
         'PARTTEXT': "insert into PARTTEXT (PART , TEXT , TEXTLINE, TEXTORD) valu5es ( @PART , '{}' , {} , {} )".format(p, c, c) ,
         'PARTTEXTLANG': "insert into PARTTEXTLANG (PART , TEXT , TEXTLINE, TEXTORD) values ( @PART , '{}' , {} , {} )".format(p, c, c) ,
         'CUSTOMERSTEXT':  "insert into CUSTOMERSTEXT (CUST , TEXT , TEXTLINE, TEXTORD) values ( @CUST , '{}' , {} , {} )".format(p, c, c) ,
-        'ZSRV_CUSTOMERSTEXT':  "insert into ZSRV_CUSTOMERSTEXT (CUST , TEXT , TEXTLINE, TEXTORD) values ( @CUST , '{}' , {} , {} )".format(p, c, c) ,
+        'WORKCTEXT' : "insert into {} (WORKC , TEXT , TEXTLINE, TEXTORD) values ( @WORKC , '{}' , {} , {} )".format(form, p, c, c) ,
         'Other': "insert into {} (PART , TEXT , TEXTLINE, TEXTORD) values ( @PART , '{}' , {} , {} )".format(form, p, c, c) ,
     }.get(a.name) 
 
